@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Together Tales - Products</title>
+
+    <style>
+        /* --- General Styling & Font --- */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff; 
+            color: #333; 
+            line-height: 1.6;
+            font-weight: 300; 
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Header & Logo --- */
+        .main-header {
+            background-color: #222; 
+            border-bottom: 1px solid #111; 
+            padding: 20px 0; 
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .header-utility-left {
+            width: 100px; 
+            visibility: hidden; 
+        }
+        
+        .header-center-content {
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo {
+            text-align: center;
+        }
+
+        .logo img {
+            height: 140px; 
+            margin-bottom: 5px;
+        }
+
+        .logo-title {
+            font-size: 1.5em;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ffffff; 
+        }
+        
+        /* Styling for the Cart link container */
+        .utility-icons {
+            position: relative; 
+            width: 100px; 
+            text-align: right;
+            padding-right: 20px;
+        }
+        .utility-icons a {
+            font-size: 2em; 
+            font-weight: 600;
+            line-height: 1; 
+            display: inline-block;
+            color: #ffffff !important; 
+        }
+
+        /* --- Cart Notification Badge Style --- */
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            right: 15px; 
+            background-color: #ffffff; 
+            color: #333; 
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 15px; 
+            text-align: center;
+            line-height: 1.2;
+            display: none; 
+        }
+        
+        .cart-active #cart-count {
+            display: block;
+        }
+
+
+        /* --- Sale Banner & Scrolling Text --- */
+        .sale-banner {
+            background-color: #222; 
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px; 
+        }
+
+        .sale-banner h1 {
+            font-size: 3em;
+            margin: 0;
+            color: #ffffff; 
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px; 
+        }
+        
+        /* Scrolling Text Wrapper (Acts as the window) */
+        .scrolling-text-wrapper {
+            width: 100%;
+            overflow: hidden;
+            background-color: #000; 
+            border-top: 1px solid #444;
+            padding: 5px 0;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        
+        /* Scrolling Text Content */
+        .scrolling-text-content {
+            display: inline-block;
+            color: #ffffff; 
+            font-size: 1.1em;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding-left: 100%; 
+            animation: scroll-text 15s linear infinite; 
+        }
+        
+        @keyframes scroll-text {
+          from {
+            transform: translateX(0%);
+          }
+          to {
+            transform: translateX(-100%); 
+          }
+        }
+        /* --- END Sale Banner & Scrolling Text --- */
+
+        /* --- Main Layout: FULL WIDTH GRID --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 20px;
+        }
+
+        .product-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 25px;
+        }
+
+        /* --- Product Card & Image Styles --- */
+        .product-card {
+            background-color: #ffffff;
+            border: 1px solid #eeeeee;
+            text-align: center;
+            padding-bottom: 20px;
+            transition: box-shadow 0.3s, transform 0.2s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Standard Image Container - Sets Aspect Ratio */
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 100%; 
+        }
+        
+        /* Standard Image Positioning */
+        .product-card img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            display: block;
+        }
+
+        /* --- SLIDER SPECIFIC STYLES --- */
+        .product-slider .image-container {
+            padding-top: 100%;
+            position: relative; 
+            cursor: grab; 
+        }
+        .product-slider .image-container:active {
+            cursor: grabbing;
+        }
+        .product-slider .image-container > div {
+            position: absolute; 
+            top: 0;
+            left: 0;
+            height: 100%;
+            white-space: nowrap; 
+            font-size: 0; 
+            transition: transform 0.4s ease-in-out; 
+            will-change: transform; 
+        }
+        .product-slider img {
+            position: relative; 
+            display: inline-block; 
+            height: 100%;
+            object-fit: cover;
+            top: auto; 
+            left: auto;
+            opacity: 1; 
+            transition: none; 
+            pointer-events: none; 
+        }
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2em;
+            line-height: 1;
+            transition: background 0.2s;
+            opacity: 0;
+        }
+        .product-slider:hover .slider-arrow { opacity: 1; }
+        .slider-arrow:hover { background: rgba(0, 0, 0, 0.7); }
+        .slider-arrow.prev { left: 0; border-radius: 0 3px 3px 0; }
+        .slider-arrow.next { right: 0; border-radius: 3px 0 0 3px; }
+        .slider-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+        .slide-dot {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        .slide-dot.active {
+            background-color: #222;
+            border: 1px solid #ffffff;
+        }
+        .swipe-hint {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: rgba(0, 0, 0, 0.8);
+            z-index: 9;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.4s;
+            animation: pulse-arrow 1.5s infinite;
+        }
+        .product-card[data-current-slide="0"] .swipe-hint { opacity: 1; animation: pulse-arrow 1.5s infinite; }
+        .product-card[data-current-slide="1"] .swipe-hint { opacity: 0; animation: none; }
+        
+        @keyframes pulse-arrow {
+            0% { transform: translateY(-50%) translateX(0); opacity: 0.8; }
+            50% { transform: translateY(-50%) translateX(5px); opacity: 1; }
+            100% { transform: translateY(-50%) translateX(0); opacity: 0.8; }
+        }
+        /* --- END SLIDER STYLES --- */
+
+        .product-name {
+            font-weight: 500; 
+            margin: 15px 0 5px 0; 
+            padding: 0 15px;
+            font-size: 1.05em;
+            color: #333;
+        }
+
+        .product-description {
+            font-size: 0.85em;
+            color: #777;
+            margin: 0 0 10px 0;
+            padding: 0 15px;
+            height: 40px; 
+            line-height: 1.3;
+            overflow: hidden;
+        }
+
+        .sale-price {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* New styles for size dropdown */
+        .option-group {
+            width: 90%;
+            margin: 0 auto 10px;
+            text-align: left;
+        }
+        .option-group label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .option-group select {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+
+        /* Container for two buttons */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            margin: 0 auto;
+        }
+        
+        /* --- BUTTON STYLES WITH SMOOTH EDGES AND EFFECTS --- */
+        .buy-now-btn, .add-to-cart-btn {
+            border: 1px solid #333;
+            padding: 10px 0;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            width: 48%; 
+            margin-top: 10px;
+            
+            border-radius: 20px; 
+            
+            transition: all 0.2s ease-out; 
+            font-size: 0.85em;
+            
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+        }
+        
+        /* General Hover Effect: Lift and increase shadow */
+        .buy-now-btn:hover, .add-to-cart-btn:hover {
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); 
+        }
+        
+        /* General Active/Click Effect: Press down */
+        .buy-now-btn:active, .add-to-cart-btn:active {
+            transform: translateY(0); 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 
+                        inset 0 1px 3px rgba(0, 0, 0, 0.2); 
+        }
+
+        /* BUY NOW (White Button) Specific Styles */
+        .buy-now-btn {
+            background-color: #fff;
+            color: #333;
+        }
+
+        /* ADD TO CART (Black Button) Specific Styles */
+        .add-to-cart-btn {
+            background-color: #333;
+            color: white;
+        }
+        
+        .buy-now-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #555;
+        }
+        /* --- END BUTTON STYLES --- */
+
+        /* Quantity Controls Styling (Active State) */
+        .quantity-group {
+            display: none; 
+        }
+        .product-card.active .button-group {
+            display: none;
+        }
+        .product-card.active .quantity-group {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .product-card.active .quantity-controls {
+            display: flex;
+             width: 100%;
+             margin-bottom: 10px;
+             border: 1px solid #333;
+            border-radius: 20px; 
+        }
+        .product-card.active .buy-now-btn {
+             display: block;
+             width: 100%;
+        }
+
+        .quantity-controls button {
+            background-color: white;
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .quantity-controls button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .quantity-controls .quantity-display {
+            font-weight: 600;
+            font-size: 1.1em;
+            padding: 0 10px;
+            user-select: none;
+            flex-grow: 1;
+        }
+        
+        /* General quantity controls (outside active state) */
+         .quantity-controls {
+            display: none; 
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* --- Footer Styles --- */
+        .main-footer {
+            background-color: #222;
+            color: #ffffff;
+            padding: 30px 20px;
+            margin-top: 50px; 
+            border-top: 1px solid #111;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            flex-direction: column; 
+            text-align: center;
+        }
+
+        .powered-by {
+            font-size: 0.9em;
+            font-weight: 300;
+            margin: 0;
+            padding: 10px 0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            padding: 10px 0;
+            margin-bottom: 5px; 
+        }
+
+        .social-links a img {
+            width: 24px;
+            height: 24px;
+            transition: opacity 0.2s;
+        }
+        
+        .social-links a:hover img {
+            opacity: 0.7;
+        }
+        
+        /* Instagram Pink Styling */
+        .social-links a[aria-label="Instagram"] img {
+            filter: hue-rotate(-30deg) saturate(300%) brightness(150%);
+        }
+        
+        /* Setting Facebook icon to white explicitly */
+        .social-links a[aria-label="Facebook"] img {
+            filter: invert(100%); 
+        }
+
+        /* NEW: Centering for the last three products */
+        .product-grid .product-card:nth-last-child(1),
+        .product-grid .product-card:nth-last-child(2),
+        .product-grid .product-card:nth-last-child(3) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .product-grid .product-card:nth-last-child(1) .option-group,
+        .product-grid .product-card:nth-last-child(2) .option-group,
+        .product-grid .product-card:nth-last-child(3) .option-group {
+             text-align: center;
+        }
+
+
+        /* --- Mobile Responsiveness (Media Queries) --- */
+        @media (max-width: 1200px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr); 
+            }
+        }
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .sale-banner h1 {
+                font-size: 1.6em; 
+                letter-spacing: 1px;
+            }
+            .utility-icons a {
+                font-size: 1.5em; 
+            }
+            .logo img {
+                height: 100px; 
+            }
+            .product-description {
+                height: auto; 
+            }
+            .scrolling-text-content {
+                font-size: 0.85em; 
+            }
+        }
+    </style>
+</head>
+<body onload="setupOnLoad()">
+
+    <header class="main-header">
+        <div class="header-content">
+            
+            <div class="header-utility-left"></div> 
+
+            <div class="header-center-content">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Together Tales Logo">
+                    <div class="logo-title">TOGETHER TALES</div>
+                </div>
+            </div>
+
+            <div class="utility-icons" id="main-cart-icon">
+                <a href="{{ url_for('cart') }}" title="View Shopping Cart">🛒</a>
+                <span id="cart-count">0</span>
+            </div>
+            
+        </div>
+    </header>
+
+    <section class="sale-banner">
+        <h1>WHERE LOVE BLOOMS INTO ART</h1> 
+        
+        <div class="scrolling-text-wrapper">
+            <div class="scrolling-text-content">
+                ✨ ALL PRODUCTS CUSTOMIZABLE WITH YOUR REQUIREMENTS 🎁 *** ALL PRODUCTS CUSTOMIZABLE WITH YOUR REQUIREMENTS 🎁 *** ALL PRODUCTS CUSTOMIZABLE WITH YOUR REQUIREMENTS 🎁 
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        
+        <main class="product-grid">
+            
+            <div class="product-card" data-product-id="P-HAMPER-ANNIV" data-product-name="Anniversary Gift Hamper" data-product-price="499" data-product-image="{{ url_for('static', filename='images/ANNIVERSARY GIFT HAMPER.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/ANNIVERSARY GIFT HAMPER.png') }}" alt="Anniversary Gift Hamper">
+                </div>
+                <p class="product-name">Anniversary Gift Hamper</p>
+                <p class="product-description">A curated selection of luxury items to celebrate your special day.</p>
+                <span class="sale-price">₹499</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card product-slider" data-current-slide="0" data-product-id="P-HAMPER-Bday" data-product-name="Birthday Celebration Hamper" data-product-price="499" data-product-image="{{ url_for('static', filename='images/Birthday Celebration Hamper.png') }}">
+                <div class="image-container">
+                    <button class="slider-arrow prev" onclick="navigateSlide(this, -1)">&#10094;</button>
+                    <button class="slider-arrow next" onclick="navigateSlide(this, 1)">&#10095;</button>
+
+                    <div data-slide-count="2"> 
+                        <img src="{{ url_for('static', filename='images/Birthday Celebration Hamper.png') }}" alt="Birthday Celebration Hamper - View 1" data-slide-index="0">
+                        <img src="{{ url_for('static', filename='images/BIRTHDAY GIFT BOX.png') }}" alt="Birthday Celebration Hamper - View 2" data-slide-index="1">
+                    </div>
+                    
+                    <span class="swipe-hint">-></span>
+
+                    <div class="slider-nav">
+                        <span class="slide-dot active" onclick="changeSlide(this, 0)"></span>
+                        <span class="slide-dot" onclick="changeSlide(this, 1)"></span>
+                    </div>
+                </div>
+                <p class="product-name">Birthday Celebration Hamper</p>
+                <p class="product-description">Everything you need for a joyous and memorable birthday celebration.</p>
+                <span class="sale-price">₹499</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-ROSES-CHOCO" data-product-name="Heart of Roses & Chocolate" data-product-price="1499" data-product-image="{{ url_for('static', filename='images/HEART OF ROSES & CHOCOLATE.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/HEART OF ROSES & CHOCOLATE.png') }}" alt="HEART OF ROSES & CHOCOLATE">
+                </div>
+                <p class="product-name">Heart of Roses & Chocolate</p>
+                <p class="product-description">A classic combination of fresh roses and gourmet, decadent chocolate.</p>
+                <span class="sale-price">₹1,499</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-BOUQUET-ANNIV" data-product-name="Anniversary Bouquet" data-product-price="319" data-product-image="{{ url_for('static', filename='images/ANIVERSARY BOUQUET.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/ANIVERSARY BOUQUET.png') }}" alt="ANIVERSARY BOUQUET">
+                </div>
+                <p class="product-name">Anniversary Bouquet</p>
+                <p class="product-description">A beautiful arrangement of hand-picked flowers for your anniversary.</p>
+                <span class="sale-price">₹319</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-CLOCK-RESIN" data-product-name="Custom Resin Clock" data-product-price="2099" data-product-image="{{ url_for('static', filename='images/RESIN CLOCK.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/RESIN CLOCK.png') }}" alt="Custom Resin Clock">
+                </div>
+                <p class="product-name">Custom Resin Clock</p>
+                <p class="product-description" style="height: auto;">Handcrafted resin clock, customizable with initials or a short date.</p>
+                
+                <div class="option-group">
+                    <label for="resin-size-P-CLOCK-RESIN">Select Size:</label>
+                    <select id="resin-size-P-CLOCK-RESIN" class="product-option" onchange="updatePrice(this)">
+                        <option value="2099" data-price="2099" data-option-name="8 inches">8 inches - ₹2,099</option>
+                        <option value="2299" data-price="2299" data-option-name="10 inches">10 inches - ₹2,299</option>
+                        <option value="2599" data-price="2599" data-option-name="12 inches">12 inches - ₹2,599</option>
+                    </select>
+                </div>
+                
+                <span class="sale-price" id="resin-price-display-P-CLOCK-RESIN">₹2,099</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-WALLET" data-product-name="Customized Leather Wallet" data-product-price="479" data-product-image="{{ url_for('static', filename='images/CUSTOMIZED WALLET.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/CUSTOMIZED WALLET.png') }}" alt="CUSTOMIZED WALLET">
+                </div>
+                <p class="product-name">Customized Leather Wallet</p>
+                <p class="product-description">Engrave a name or message on this premium leather wallet.</p>
+                <span class="sale-price">₹479</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-BOUQUET-TREAT" data-product-name="The Grand Treat Bouquet" data-product-price="699" data-product-image="{{ url_for('static', filename='images/The Grand Treat Bouquet.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/The Grand Treat Bouquet.png') }}" alt="The Grand Treat Bouquet">
+                </div>
+                <p class="product-name">The Grand Treat Bouquet</p>
+                <p class="product-description">An extravagant bouquet filled with exotic flowers and greenery.</p>
+                <span class="sale-price">₹699</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card product-slider" data-current-slide="0" data-product-id="P-TUMBLER" data-product-name="Classic Personalized Tumbler" data-product-price="499" data-product-image="{{ url_for('static', filename='images/TEMP1 BOTTLE.png') }}">
+                <div class="image-container">
+                    <button class="slider-arrow prev" onclick="navigateSlide(this, -1)">&#10094;</button>
+                    <button class="slider-arrow next" onclick="navigateSlide(this, 1)">&#10095;</button>
+
+                    <div data-slide-count="2"> 
+                        <img src="{{ url_for('static', filename='images/TEMP1 BOTTLE.png') }}" alt="Classic Personalized Tumbler - View 1" data-slide-index="0">
+                        <img src="{{ url_for('static', filename='images/TEMP2 BOTTLE.png') }}" alt="Classic Personalized Tumbler - View 2" data-slide-index="1">
+                    </div>
+                    
+                    <span class="swipe-hint">-></span>
+
+                    <div class="slider-nav">
+                        <span class="slide-dot active" onclick="changeSlide(this, 0)"></span>
+                        <span class="slide-dot" onclick="changeSlide(this, 1)"></span>
+                    </div>
+                </div>
+                <p class="product-name">Classic Personalized Tumbler</p>
+                <p class="product-description">Insulated bottle, view two different color options.</p>
+                <span class="sale-price">₹499</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-KEYCHAIN" data-product-name="Round Resin Keychain" data-product-price="89" data-product-image="{{ url_for('static', filename='images/RESIN ROUND KEYCHAIN.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/RESIN ROUND KEYCHAIN.png') }}" alt="RESIN ROUND KEYCHAIN">
+                </div>
+                <p class="product-name">Round Resin Keychain</p>
+                <p class="product-description">A beautiful round resin keychain with dried flower inclusions.</p>
+                <span class="sale-price">₹89</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-BOUQUET-PORT" data-product-name="Custom Portrait Bouquet" data-product-price="389" data-product-image="{{ url_for('static', filename='images/PORTRAIT BOUQUET.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/PORTRAIT BOUQUET.png') }}" alt="PORTRAIT BOUQUET">
+                </div>
+                <p class="product-name">Custom Portrait Bouquet</p>
+                <p class="product-description">Unique bouquet featuring a small framed photo or portrait.</p>
+                <span class="sale-price">₹389</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+
+            <div class="product-card" data-product-id="P-FRAME-DATE" data-product-name="Resin Date Frame" data-product-price="1499" data-product-image="{{ url_for('static', filename='images/RESIN DATE FRAME.png') }}">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/RESIN DATE FRAME.png') }}" alt="RESIN DATE FRAME">
+                </div>
+                <p class="product-name">Resin Date Frame</p>
+                <p class="product-description">Preserve a special date in a beautiful, personalized resin frame.</p>
+                <span class="sale-price">₹1,499</span>
+                
+                <div class="button-group">
+                    <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+                </div>
+            
+            </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" aria-label="Instagram"><img src="{{ url_for('static', filename='images/instagram_icon.png') }}" alt="Instagram"></a>
+                <a href="#" aria-label="Facebook"><img src="{{ url_for('static', filename='images/facebook_icon.png') }}" alt="Facebook"></a>
+            </div>
+            <p class="powered-by">&copy; 2025 Together Tales. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // --- Utility Functions ---
+        function getCart() {
+            return JSON.parse(localStorage.getItem('togetherTalesCart')) || [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('togetherTalesCart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cart = getCart();
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountElement = document.getElementById('cart-count');
+            
+            cartCountElement.textContent = count;
+            // Show/hide the badge and activate/deactivate the header class
+            if (count > 0) {
+                cartCountElement.parentElement.classList.add('cart-active');
+            } else {
+                cartCountElement.parentElement.classList.remove('cart-active');
+            }
+        }
+        
+        function getProductData(button) {
+            const card = button.closest('.product-card');
+            if (!card) return null;
+
+            const productId = card.getAttribute('data-product-id');
+            const productName = card.getAttribute('data-product-name');
+            let productPrice = parseFloat(card.getAttribute('data-product-price'));
+            const productImage = card.getAttribute('data-product-image');
+            
+            let productOption = null;
+
+            // Check for selectable options (like size)
+            const optionSelect = card.querySelector('.product-option');
+            if (optionSelect) {
+                // Update price from selected option
+                const selectedOption = optionSelect.options[optionSelect.selectedIndex];
+                productPrice = parseFloat(selectedOption.getAttribute('data-price'));
+                productOption = selectedOption.getAttribute('data-option-name');
+            }
+            
+            return { productId, productName, productPrice, productImage, productOption };
+        }
+
+        // --- Pricing/Option Logic (for Resin Clock) ---
+        function updatePrice(selectElement) {
+            const card = selectElement.closest('.product-card');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const newPrice = selectedOption.getAttribute('data-price');
+            
+            // Update the data-product-price attribute on the card
+            card.setAttribute('data-product-price', newPrice);
+            
+            // Update the display text
+            const priceDisplay = card.querySelector('.sale-price');
+            priceDisplay.textContent = `₹${parseFloat(newPrice).toLocaleString('en-IN')}`;
+        }
+        
+        // --- Cart Action Functions ---
+        function addToCart(button) {
+            const data = getProductData(button);
+            if (!data) return;
+
+            let cart = getCart();
+            let existingItem = cart.find(item => item.id === data.productId && item.option === data.productOption);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: data.productId,
+                    name: data.productName,
+                    price: data.productPrice,
+                    image: data.productImage,
+                    option: data.productOption,
+                    quantity: 1
+                });
+            }
+            saveCart(cart);
+            alert(`${data.productName} added to cart!`);
+        }
+
+        // --- NEW: BUY NOW Function (Adds to Cart and Redirects) ---
+        function buyNow(linkElement) {
+            const data = getProductData(linkElement);
+            if (!data) return;
+
+            // 1. Add the item to the cart
+            let cart = getCart();
+            let existingItem = cart.find(item => item.id === data.productId && item.option === data.productOption);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: data.productId,
+                    name: data.productName,
+                    price: data.productPrice,
+                    image: data.productImage,
+                    option: data.productOption,
+                    quantity: 1
+                });
+            }
+            saveCart(cart);
+            
+            // 2. Redirection is automatically handled by the <a> tag's href="{{ url_for('cart') }}"
+        }
+
+        // --- Slider Logic (Included from your original code) ---
+        function changeSlide(dot, slideIndex) {
+            const card = dot.closest('.product-card');
+            const sliderDiv = card.querySelector('.image-container > div');
+            const totalSlides = parseInt(sliderDiv.getAttribute('data-slide-count'));
+
+            if (slideIndex < 0 || slideIndex >= totalSlides) return;
+
+            const slideWidth = 100 / totalSlides;
+            sliderDiv.style.transform = `translateX(-${slideIndex * slideWidth}%)`;
+            card.setAttribute('data-current-slide', slideIndex);
+
+            // Update dots
+            card.querySelectorAll('.slide-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === slideIndex);
+            });
+        }
+
+        function navigateSlide(arrow, direction) {
+            const card = arrow.closest('.product-card');
+            const currentSlide = parseInt(card.getAttribute('data-current-slide'));
+            const totalSlides = parseInt(card.querySelector('.image-container > div').getAttribute('data-slide-count'));
+            
+            let newIndex = currentSlide + direction;
+            if (newIndex >= totalSlides) newIndex = 0; // Loop to first
+            if (newIndex < 0) newIndex = totalSlides - 1; // Loop to last
+            
+            changeSlide(card.querySelector(`.slide-dot[data-slide-index="${newIndex}"]`), newIndex);
+        }
+        
+        // --- Initialization ---
+        function setupOnLoad() {
+            updateCartCount(); // Initialize cart count on page load
+            // Initialization for price display on load (for Resin Clock)
+            const resinSelect = document.getElementById('resin-size-P-CLOCK-RESIN');
+            if(resinSelect) {
+                 updatePrice(resinSelect);
+            }
+            
+            // Add other necessary initializations here (like slider drag handlers)
+        }
+
+        // Add event listener for general initialization
+        document.addEventListener('DOMContentLoaded', setupOnLoad);
+
+    </script>
+</body>
+</html>

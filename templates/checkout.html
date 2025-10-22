@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Together Tales - Checkout</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @keyframes fadeInUp { 0% {opacity:0; transform:translateY(15px);} 100% {opacity:1; transform:translateY(0);} }
+    .fade-in { animation:fadeInUp 0.8s ease-out; }
+    .logo-img { transition: transform 0.25s ease-in-out; }
+    .logo-img:hover { transform: scale(1.05); }
+    input:focus, select:focus { outline:none!important; border-color:#111!important; ring-color:#111!important; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center">
+
+<header class="w-full bg-gray-800 py-6 shadow-lg"> <!-- lighter black -->
+    <div class="flex flex-col items-center justify-center text-center fade-in">
+        <a href="{{ url_for('index') }}" class="flex flex-col items-center">
+            <img 
+                src="{{ url_for('static', filename='images/LOGO.png') }}" 
+                alt="Together Tales Logo" 
+                class="logo-img w-40 h-40 object-contain rounded-full mb-3"
+                onerror="this.onerror=null; this.src='https://placehold.co/160x160/E67E22/fff?text=TT'; this.classList.remove('rounded-full')"
+            >
+            <h1 class="text-3xl md:text-4xl tracking-[4px] text-white font-semibold uppercase">Together Tales</h1>
+        </a>
+    </div>
+</header>
+
+<main class="flex-grow w-full flex items-center justify-center p-4 fade-in">
+    <div class="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-6 md:p-10 mt-10">
+
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-2 text-center">Final Checkout</h2>
+        <p id="order-total-display" class="text-xl font-semibold text-gray-800 mb-6 text-center">Order Total: Loading...</p>
+        
+        <form id="checkout-form" class="space-y-6">
+            <h3 class="text-2xl font-bold text-gray-700 border-b pb-2 mb-4">Customer Details</h3>
+
+            <div>
+                <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="customerName" required placeholder="e.g., Jane Doe"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black shadow-sm">
+            </div>
+
+            <div>
+                <label for="customerPhone" class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Phone Number</label>
+                <input type="tel" id="customerPhone" required placeholder="e.g., 919876543210"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black shadow-sm">
+                <p class="text-xs text-gray-500 mt-1">This number will receive the confirmation receipt.</p>
+            </div>
+
+            <!-- Address Fields -->
+            <div>
+                <label for="addressLine1" class="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
+                <input type="text" id="addressLine1" required placeholder="Street, Building Number"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black shadow-sm">
+            </div>
+            <div>
+                <label for="addressLine2" class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+                <input type="text" id="addressLine2" placeholder="Area, Locality (optional)"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black shadow-sm">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                    <input type="text" id="city" required placeholder="City"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black shadow-sm">
+                </div>
+                <div>
+                    <label for="pincode" class="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
+                    <input type="text" id="pincode" required placeholder="Pincode"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black shadow-sm">
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div>
+                <label for="paymentMode" class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                <select id="paymentMode" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed shadow-sm" disabled>
+                    <option value="Cash on Delivery (COD)">Cash on Delivery (COD)</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">Currently only Cash on Delivery is available.</p>
+            </div>
+
+            <button type="submit" 
+                    class="w-full mt-6 py-4 px-4 bg-black text-white font-semibold rounded-xl shadow-lg 
+                           hover:bg-gray-800 transition duration-300 ease-in-out transform hover:scale-[1.02]">
+                Place Order & Confirm
+            </button>
+            
+            <a href="{{ url_for('cart') }}" 
+               class="block text-center text-sm text-gray-500 hover:text-black transition duration-150">
+                &larr; Return to Cart
+            </a>
+        </form>
+    </div>
+</main>
+
+<script>
+const form=document.getElementById('checkout-form');
+const orderTotalDisplay=document.getElementById('order-total-display');
+
+function formatPrice(price){return '₹'+Math.round(price).toLocaleString('en-IN');}
+
+function loadOrderTotal(){
+    const total = localStorage.getItem('cartTotal');
+    if(total){
+        orderTotalDisplay.textContent = `Order Total: ${formatPrice(parseFloat(total))}`;
+    } else {
+        orderTotalDisplay.textContent = 'Order Total: Cart is Empty';
+        setTimeout(()=>{window.location.href="/cart";}, 1000);
+    }
+}
+
+function generateUniqueCode(){
+    const timestamp=new Date().getTime().toString().slice(-6);
+    const random=Math.floor(Math.random()*9000)+1000;
+    return `TT-ORD-${timestamp}-${random}`;
+}
+
+function getCart(){
+    const cartString=localStorage.getItem('togetherTalesCart');
+    return cartString ? JSON.parse(cartString) : [];
+}
+
+function getProductSummary(cart){
+    return cart.map(item=>`${item.name} (x${item.quantity}) — ${formatPrice(item.price * item.quantity)}`).join('\n');
+}
+
+form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+
+    const name=document.getElementById('customerName').value.trim();
+    const phone=document.getElementById('customerPhone').value.trim();
+    const addressLine1=document.getElementById('addressLine1').value.trim();
+    const addressLine2=document.getElementById('addressLine2').value.trim();
+    const city=document.getElementById('city').value.trim();
+    const pincode=document.getElementById('pincode').value.trim();
+    const paymentMode=document.getElementById('paymentMode').value;
+    const total=localStorage.getItem('cartTotal');
+    const cartItems=getCart();
+
+    if(!name || !phone || !addressLine1 || !city || !pincode || !total || cartItems.length===0){
+        orderTotalDisplay.textContent = 'Order Failed: Missing details or empty cart.';
+        return;
+    }
+
+    const orderId=generateUniqueCode();
+    const productSummary=getProductSummary(cartItems);
+
+    const orderData={
+        name, phone, paymentMode, orderId, total:parseFloat(total),
+        productSummary, addressLine1, addressLine2, city, pincode
+    };
+
+    localStorage.setItem('finalOrderDetails', JSON.stringify(orderData));
+    window.location.href="/order_success";
+});
+
+window.onload=loadOrderTotal;
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Together Tales - Order Success</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @keyframes spin { to{transform:rotate(360deg);} }
+    .animate-spin-slow { animation: spin 1.5s linear infinite; }
+    .whatsapp-btn { background-color:#25D366; transition:all 0.2s; }
+    .whatsapp-btn:hover { background-color:#128C7E; transform:scale(1.01); }
+</style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<header class="bg-gray-800 text-white py-6 flex flex-col items-center justify-center shadow-md"> <!-- lighter black -->
+    <img src="{{ url_for('static', filename='images/LOGO.png') }}" 
+         alt="Together Tales Logo" 
+         class="h-16 w-16 mb-2 rounded-full object-cover"
+         onerror="this.onerror=null; this.src='https://placehold.co/64x64/E67E22/fff?text=TT'; this.classList.remove('rounded-full')">
+    <h1 class="text-3xl font-bold">Together Tales</h1>
+</header>
+
+<div class="flex items-center justify-center p-4 min-h-[calc(100vh-104px)]">
+    <div class="w-full max-w-lg bg-white rounded-xl shadow-2xl p-6 md:p-8">
+        <div id="loading-state" class="flex flex-col items-center justify-center p-10 h-64">
+            <div class="h-12 w-12 border-4 border-t-4 border-gray-300 border-t-black rounded-full animate-spin-slow mb-4"></div>
+            <p class="text-xl font-medium text-black">Finalizing your order...</p>
+            <p class="text-gray-500 text-sm mt-1">Generating unique order code and preparing your receipt.</p>
+        </div>
+
+        <div id="confirmation-content" class="hidden text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <h2 class="text-3xl font-bold text-green-600 mb-4">Order Placed Successfully!</h2>
+
+            <div class="bg-green-50 border border-green-200 p-4 rounded-xl mb-6 shadow-md">
+                <p class="text-lg font-medium text-gray-800">Your Unique Order Code:</p>
+                <p id="unique-code" class="text-4xl font-extrabold text-green-700 tracking-wider mt-2">XXXX-XXXX</p>
+                <p id="order-total" class="text-xl text-green-600 mt-2">Total: ₹0</p>
+            </div>
+
+            <div class="text-left mb-6 p-4 border rounded-lg bg-gray-50">
+                <h3 class="text-lg font-semibold mb-2 text-gray-800">Full Receipt Details:</h3>
+                <p id="full-receipt-details" class="text-sm whitespace-pre-line text-gray-600 leading-relaxed"></p>
+            </div>
+
+            <p class="text-gray-600 mb-6">Click below to send your confirmation receipt via WhatsApp:</p>
+
+            <a id="whatsapp-link" href="#" target="_blank" class="whatsapp-btn inline-flex items-center justify-center w-full py-3 px-4 text-white font-semibold rounded-lg shadow-lg mb-4">
+                Send Receipt via WhatsApp
+            </a>
+
+            <button id="continueShoppingBtn" class="mt-2 text-sm text-black hover:text-gray-600 transition duration-150">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+const loadingState=document.getElementById('loading-state');
+const confirmationContent=document.getElementById('confirmation-content');
+const uniqueCodeDisplay=document.getElementById('unique-code');
+const orderTotalDisplay=document.getElementById('order-total');
+const whatsappLink=document.getElementById('whatsapp-link');
+const continueShoppingBtn=document.getElementById('continueShoppingBtn');
+const fullReceiptDetails=document.getElementById('full-receipt-details');
+
+function formatPrice(price){return '₹'+Math.round(price).toLocaleString('en-IN');}
+
+function generateOrderCode(){
+    const timestamp=Date.now().toString().slice(-6);
+    const random=Math.floor(Math.random()*9000)+1000;
+    return `TT-ORD-${timestamp}-${random}`;
+}
+
+function clearCartData(){
+    localStorage.removeItem('togetherTalesCart');
+    localStorage.removeItem('cartTotal');
+    localStorage.removeItem('finalOrderDetails');
+}
+
+function processOrderConfirmation(){
+    loadingState.classList.remove('hidden');
+    confirmationContent.classList.add('hidden');
+
+    setTimeout(()=>{
+        loadingState.classList.add('hidden');
+        confirmationContent.classList.remove('hidden');
+
+        const orderDataString=localStorage.getItem('finalOrderDetails');
+        const totalString=localStorage.getItem('cartTotal');
+
+        if(!orderDataString || !totalString){
+            uniqueCodeDisplay.textContent='DATA MISSING';
+            orderTotalDisplay.textContent='Total: N/A';
+            confirmationContent.innerHTML='<p class="text-red-500 font-medium">Order data not found. Please ensure checkout was completed properly.</p>';
+            whatsappLink.classList.add('hidden');
+            return;
+        }
+
+        const orderData=JSON.parse(orderDataString);
+        const uniqueCode=generateOrderCode();
+        const total=parseFloat(totalString);
+
+        uniqueCodeDisplay.textContent=uniqueCode;
+        orderTotalDisplay.textContent=`Total: ${formatPrice(total)}`;
+
+        const address=`${orderData.addressLine1}${orderData.addressLine2 ? ', '+orderData.addressLine2 : ''}, ${orderData.city} - ${orderData.pincode}`;
+        const detailedReceipt=
+`Customer: ${orderData.name}
+Phone: ${orderData.phone}
+Payment: ${orderData.paymentMode}
+Address: ${address}
+
+--- Products ---
+${orderData.productSummary}
+-----------------
+Order Total: ${formatPrice(total)}`;
+
+        fullReceiptDetails.textContent=detailedReceipt;
+
+        // WhatsApp pre-filled message
+        const businessNumber='917207005653';
+        const message=
+`🎀 *TOGETHER TALES – ORDER RECEIVED* 🎀
+
+🆔 *Order Code:* ${uniqueCode}
+👤 *Customer Name:* ${orderData.name}
+📞 *Contact:* ${orderData.phone}
+🏡 *Shipping Address:* ${address}
+💸 *Total Amount:* ${formatPrice(total)}
+
+🛍️ *Items Ordered:*
+${orderData.productSummary.split('\n').map(item => '• ' + item).join('\n')}
+
+✨ Please confirm this order and begin processing.`;
+
+        whatsappLink.href=`https://api.whatsapp.com/send?phone=${businessNumber}&text=${encodeURIComponent(message)}`;
+
+        clearCartData();
+    },3000);
+}
+
+continueShoppingBtn.addEventListener('click',()=>{window.location.href="/";});
+window.onload=processOrderConfirmation;
+</script>
+</body>
+</html>

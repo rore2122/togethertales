@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Together Tales - Shopping Cart</title>
+    
+    <style>
+        /* --- General Reset & Font --- */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8; 
+            color: #333; 
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Header Styling --- */
+        .main-header {
+            background-color: #222; 
+            border-bottom: 1px solid #111; 
+            padding: 30px 0; 
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center; /* Centers logo + title horizontally */
+            align-items: center;      /* Centers vertically */
+            flex-direction: column;   /* Stack logo and title vertically */
+            text-align: center;
+        }
+
+        .logo img {
+            height: 180px;  /* Increased logo size */
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .logo img:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-title {
+            font-size: 2em;           /* Bigger title */
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #ffffff; 
+            margin-top: 5px;
+        }
+
+        /* --- Main Cart Container --- */
+        .cart-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .cart-container h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        /* --- Cart Layout --- */
+        .cart-content {
+            display: flex;
+            gap: 30px;
+        }
+
+        .cart-items {
+            flex: 2; 
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .cart-summary {
+            flex: 1; 
+            background-color: #fff;
+            padding: 25px;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            height: fit-content; 
+        }
+        
+        /* --- Empty Cart Message --- */
+        #empty-cart-message {
+            text-align: center;
+            padding: 50px 0;
+            font-size: 1.2em;
+            color: #777;
+        }
+        
+        #empty-cart-message a {
+            color: #333;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* --- Individual Cart Item Styling --- */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            margin-right: 20px;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .item-option {
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        .item-price {
+            font-weight: 500;
+            font-size: 1em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        /* --- Quantity Controls --- */
+        .item-quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            border-radius: 20px; 
+            width: 110px; 
+            margin-right: 20px;
+        }
+        .item-quantity-controls button {
+            background-color: #fff;
+            color: #333;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 20px;
+            transition: background-color 0.1s;
+        }
+        .item-quantity-controls button:hover {
+            background-color: #f0f0f0;
+        }
+        .quantity-display {
+            padding: 0 5px;
+            font-weight: 500;
+            text-align: center;
+            width: 25px;
+        }
+        
+        .item-subtotal {
+            width: 100px;
+            text-align: right;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .remove-button {
+            background: none;
+            border: none;
+            font-size: 1.5em; 
+            cursor: pointer;
+            padding: 0 10px;
+            margin-left: 10px;
+            color: inherit; 
+        }
+        .remove-button:hover {
+            opacity: 0.7;
+        }
+
+        /* --- Cart Summary --- */
+        .summary-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 1.1em;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #333;
+            padding-top: 15px;
+            margin-top: 10px;
+            font-weight: 700;
+            font-size: 1.3em;
+        }
+        
+        .summary-value {
+             font-weight: 600;
+        }
+
+        /* --- Checkout Button --- */
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 0;
+            margin-top: 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        .checkout-btn:hover {
+            background-color: #555;
+        }
+
+        .continue-shopping {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #333;
+            text-decoration: underline;
+            font-size: 1em;
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 900px) {
+            .cart-content {
+                flex-direction: column;
+            }
+            .cart-summary {
+                margin-top: 30px;
+            }
+            .item-subtotal {
+                display: none; 
+            }
+            .item-quantity-controls {
+                width: 90px;
+                margin-right: 10px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cart-item {
+                flex-wrap: wrap;
+            }
+            .item-image {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 10px;
+            }
+            .item-details {
+                margin-bottom: 10px;
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</head>
+<body onload="renderCart()">
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Together Tales Logo">
+                    <div class="logo-title">TOGETHER TALES</div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <h1>🛒 My Shopping Cart</h1>
+        
+        <div class="cart-content">
+            <div class="cart-items" id="cart-items-list"></div>
+            
+            <div class="cart-summary" id="cart-summary-section">
+                <div class="summary-title">Order Summary</div>
+                
+                <div class="summary-rows-container">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span class="summary-value" id="summary-subtotal">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span class="summary-value" id="summary-shipping">FREE</span>
+                    </div>
+                    
+                    <div class="summary-row total">
+                        <span>Order Total:</span>
+                        <span class="summary-value" id="summary-total">₹0</span>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('checkout') }}" class="checkout-btn" id="checkout-link">Proceed to Checkout</a>
+                <a href="{{ url_for('index') }}" class="continue-shopping">Continue Shopping</a>
+            </div>
+        </div>
+        
+        <div id="empty-cart-message" style="display: none;">
+            Your cart is empty! <a href="{{ url_for('index') }}">Start adding products</a> to your order.
+        </div>
+    </div>
+    
+    <script>
+        const SHIPPING_COST = 0; 
+        const cartListElement = document.getElementById('cart-items-list');
+        const summarySubtotalElement = document.getElementById('summary-subtotal');
+        const summaryTotalElement = document.getElementById('summary-total');
+        const emptyMessageElement = document.getElementById('empty-cart-message');
+        const summarySectionElement = document.getElementById('cart-summary-section');
+        const checkoutLink = document.getElementById('checkout-link');
+
+        function formatPrice(price) {
+            return '₹' + Math.round(price).toLocaleString('en-IN');
+        }
+
+        function getCart() {
+            const cartString = localStorage.getItem('togetherTalesCart');
+            return cartString ? JSON.parse(cartString) : [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('togetherTalesCart', JSON.stringify(cart));
+        }
+        
+        function renderCart() {
+            const cart = getCart();
+            cartListElement.innerHTML = '';
+            
+            let totalSubtotal = 0;
+
+            if (cart.length === 0) {
+                cartListElement.style.display = 'none';
+                summarySectionElement.style.display = 'none';
+                emptyMessageElement.style.display = 'block';
+                checkoutLink.style.pointerEvents = 'none';
+                checkoutLink.style.opacity = '0.5';
+                return;
+            } else {
+                cartListElement.style.display = 'block';
+                summarySectionElement.style.display = 'block';
+                emptyMessageElement.style.display = 'none';
+                checkoutLink.style.pointerEvents = 'auto';
+                checkoutLink.style.opacity = '1';
+            }
+
+            cart.forEach(item => {
+                const itemSubtotal = item.price * item.quantity;
+                totalSubtotal += itemSubtotal;
+
+                const itemImageSrc = item.image || 'https://placehold.co/100x100/333/fff?text=Product'; 
+
+                const itemHTML = `
+                    <div class="cart-item" data-item-id="${item.id}">
+                        <img class="item-image" src="${itemImageSrc}" alt="${item.name}">
+                        <div class="item-details">
+                            <div class="item-name">${item.name}</div>
+                            ${item.option ? `<div class="item-option">Size/Option: ${item.option}</div>` : ''}
+                            <div class="item-price">Price: ${formatPrice(item.price)}</div>
+                        </div>
+                        <div class="item-quantity-controls">
+                            <button onclick="changeItemQuantity('${item.id}', -1)">-</button>
+                            <span class="quantity-display">${item.quantity}</span>
+                            <button onclick="changeItemQuantity('${item.id}', 1)">+</button>
+                        </div>
+                        <div class="item-subtotal">${formatPrice(itemSubtotal)}</div>
+                        <button class="remove-button" onclick="removeItem('${item.id}')">🗑️</button>
+                    </div>
+                `;
+                cartListElement.innerHTML += itemHTML;
+            });
+
+            const total = totalSubtotal + SHIPPING_COST;
+            summarySubtotalElement.textContent = formatPrice(totalSubtotal);
+            document.getElementById('summary-shipping').textContent = SHIPPING_COST === 0 ? 'FREE' : formatPrice(SHIPPING_COST);
+            summaryTotalElement.textContent = formatPrice(total);
+            localStorage.setItem('cartTotal', total);
+        }
+
+        function changeItemQuantity(itemId, delta) {
+            let cart = getCart();
+            let item = cart.find(i => i.id === itemId);
+
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) removeItem(itemId);
+                else {
+                    saveCart(cart);
+                    renderCart();
+                }
+            }
+        }
+
+        function removeItem(itemId) {
+            let cart = getCart();
+            cart = cart.filter(item => item.id !== itemId);
+            saveCart(cart);
+            renderCart();
+        }
+
+        window.addEventListener('load', renderCart);
+    </script>
+</body>
+</html>
