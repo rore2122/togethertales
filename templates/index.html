@@ -788,14 +788,26 @@
                 </div>
                 </div>
             <!-- New Product: Resin Keychain -->
-<div class="product-card">
-  <img src="static/images/RESIN KEYCHAIN.png" alt="Resin Keychain" class="product-image">
-  <h3 class="product-title">Resin Keychain</h3>
-  <p class="product-description">A handmade resin keychain — small, elegant, and perfect for everyday style.</p>
-  <p class="product-price">₹89</p>
-  <button class="add-to-cart">Add to Cart</button>
-  <button class="buy-now">Buy Now</button>
+<div class="product-card" 
+     data-product-id="P-RESIN-KEYCHAIN" 
+     data-product-name="Resin Keychain" 
+     data-product-price="89" 
+     data-product-image="{{ url_for('static', filename='images/RESIN KEYCHAIN.png') }}">
+
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='images/RESIN KEYCHAIN.png') }}" alt="Resin Keychain">
+    </div>
+    
+    <p class="product-name">Resin Keychain</p>
+    <p class="product-description">A handmade resin keychain — small, elegant, and perfect for everyday style.</p>
+    <span class="sale-price">₹89</span>
+    
+    <div class="button-group">
+        <a href="{{ url_for('cart') }}" class="buy-now-btn" onclick="buyNow(this)">BUY NOW</a>
+        <button class="add-to-cart-btn" onclick="addToCart(this)">ADD TO CART</button>
+    </div>
 </div>
+
 
             </main>
     </div>
