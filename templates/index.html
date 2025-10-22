@@ -502,9 +502,26 @@
             opacity: 0.7;
         }
         
-        /* Instagram Pink Styling */
-        .social-links a[aria-label="Instagram"] img {
-            filter: hue-rotate(-30deg) saturate(300%) brightness(150%);
+       /* --- Instagram Link Styles --- */
+.instagram-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #E1306C; /* Instagram pink */
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 1em;
+}
+
+.instagram-link img {
+    width: 24px;
+    height: 24px;
+}
+
+.instagram-link:hover {
+    opacity: 0.8;
+}
+
         }
         
         /* Setting Facebook icon to white explicitly */
@@ -814,12 +831,17 @@
 
     <footer class="main-footer">
         <div class="footer-content">
-            <div class="social-links">
-                <a href="#" aria-label="Instagram"><img src="{{ url_for('static', filename='images/instagram_icon.png') }}" alt="Instagram"></a>
-                <a href="#" aria-label="Facebook"><img src="{{ url_for('static', filename='images/facebook_icon.png') }}" alt="Facebook"></a>
-            </div>
-            <p class="powered-by">&copy; 2025 Together Tales. All rights reserved.</p>
+        <div class="social-links">
+            <a href="https://www.instagram.com/togethertales.in?utm_source=qr&igsh=cTh6dHBqcmM0b3Jt" 
+               target="_blank" 
+               aria-label="Instagram" 
+               class="instagram-link">
+                <img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram">
+                @togethertales.in
+            </a>
         </div>
+        <p class="powered-by">&copy; 2025 Together Tales. All rights reserved.</p>
+    </div>
     </footer>
     
     <script>
